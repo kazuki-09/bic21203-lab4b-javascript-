@@ -24,3 +24,4 @@ Uses jQuery 4.0.0 to change text with .text(), add .myStyle with .addClass(), an
 <img width="764" height="298" alt="image" src="https://github.com/user-attachments/assets/c5b61399-524b-4b5a-99e9-7c31a92a4332" />
 
 ### GitHub Repository
+https://github.com/kazuki-09/bic21203-lab4b-javascript-.git
