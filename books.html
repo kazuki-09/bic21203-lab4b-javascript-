@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Question 2 - Books Data (fetch)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+      max-width: 680px;
+      margin: 56px auto;
+      padding: 0 20px;
+      line-height: 1.65;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 0 0 22px;
+      color: #0f172a;
+    }
+
+    section {
+      background-color: #ffffff;
+      margin-bottom: 20px;
+      padding: 20px 24px;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 1.12rem;
+      color: #0f172a;
+    }
+
+    p {
+      margin: 8px 0;
+    }
+
+    ul {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    .error {
+      color: #b42318;
+      background-color: #fef3f2;
+      border: 1px solid #fecdca;
+      padding: 14px 16px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <h1>Books Catalog</h1>
+  <div id="output" aria-live="polite"></div>
+
+  <script>
+    const outputEl = document.getElementById("output");
+
+    function renderError(message) {
+      outputEl.replaceChildren();
+      const errorBox = document.createElement("p");
+      errorBox.className = "error";
+      errorBox.textContent = message;
+      outputEl.appendChild(errorBox);
+    }
+
+    async function loadBooksData() {
+      try {
+        const response = await fetch("books.json");
+
+        if (!response.ok) {
+          throw new Error(`Unable to retrieve books.json (Status ${response.status}).`);
+        }
+
+        const data = await response.json();
+
+        if (!data || !Array.isArray(data.books) || data.books.length < 2) {
+          throw new Error("The JSON structure is invalid or incomplete.");
+        }
+
+        const firstBook = data.books[0];
+        const secondBook = data.books[1];
+
+        outputEl.replaceChildren();
+
+        // (a) Title of the first book & (b) Author of the second book
+        const highlightsSection = document.createElement("section");
+        const highlightsHeading = document.createElement("h2");
+        highlightsHeading.textContent = "Selected Book Details";
+
+        const firstTitleP = document.createElement("p");
+        firstTitleP.textContent = `First Book Title: ${firstBook.title}`;
+
+        const secondAuthorP = document.createElement("p");
+        secondAuthorP.textContent = `Second Book Author: ${secondBook.author}`;
+
+        highlightsSection.append(highlightsHeading, firstTitleP, secondAuthorP);
+
+        // (c) Genres of both books, grouped by book title
+        const genresSection = document.createElement("section");
+        const genresHeading = document.createElement("h2");
+        genresHeading.textContent = "Genres Grouped by Book Title";
+
+        const genreList = document.createElement("ul");
+
+        data.books.forEach((book) => {
+          const item = document.createElement("li");
+          const genreText = Array.isArray(book.genres) ? book.genres.join(", ") : "";
+          item.textContent = `${book.title} — ${genreText}`;
+          genreList.appendChild(item);
+        });
+
+        genresSection.append(genresHeading, genreList);
+        outputEl.append(highlightsSection, genresSection);
+      } catch (err) {
+        console.error("Error loading books.json:", err);
+        renderError(
+          "Sorry, the books data could not be loaded. Please run this page through a local server and verify that books.json contains valid JSON."
+        );
+      }
+    }
+
+    loadBooksData();
+  </script>
+</body>
+</html>
